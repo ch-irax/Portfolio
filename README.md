@@ -1,5 +1,4 @@
-
-<<<<<<< HEAD
+# Protfolio
 A clean, simple, and production-ready backend for your personal portfolio website. Handles contact form submissions with zero database configuration.
 
 ---
@@ -75,5 +74,3 @@ npm run dev
 ## 📧 Contact
 Feel free to reach out via the form or find me on GitHub / LinkedIn. 
 I respond to inquiries with the same care I put into the code.
-=======
->>>>>>> origin/main
