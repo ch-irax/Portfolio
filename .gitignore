@@ -4,3 +4,4 @@ db/portfolio.db
 .env.local
 .DS_Store
 *.log
+README.md
