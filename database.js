@@ -27,39 +27,48 @@ const dbPath = path.join(dbDir, 'portfolio.db');
 // DATABASE CONNECTION
 // ============================================
 
-const db = new sqlite3.Database(dbPath, (err) => {
-  if (err) {
-    console.error('❌ Database connection failed:', err.message);
-    // Don't exit - allow the app to continue and handle errors gracefully
-  } else {
-    console.log('✅ Connected to SQLite database');
-    console.log(`   Location: ${dbPath}`);
-  }
-});
+let db;
+let dbReady = false;
+let dbError = null;
 
-// ============================================
-// DATABASE SCHEMA INITIALIZATION
-// ============================================
-
-// Create tables if they don't exist
-db.serialize(() => {
-  db.run(
-    `CREATE TABLE IF NOT EXISTS contacts (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      name TEXT NOT NULL,
-      email TEXT NOT NULL,
-      message TEXT NOT NULL,
-      submitted_at DATETIME DEFAULT CURRENT_TIMESTAMP
-    )`,
-    (err) => {
-      if (err) {
-        console.error('❌ Failed to create contacts table:', err.message);
-      } else {
-        console.log('✅ Database table "contacts" ready');
-      }
+try {
+  db = new sqlite3.Database(dbPath, (err) => {
+    if (err) {
+      console.error('❌ Database connection failed:', err.message);
+      dbError = err;
+      dbReady = false;
+    } else {
+      console.log('✅ Connected to SQLite database');
+      console.log(`   Location: ${dbPath}`);
+      dbReady = true;
+      
+      // Create tables if they don't exist
+      db.serialize(() => {
+        db.run(
+          `CREATE TABLE IF NOT EXISTS contacts (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            email TEXT NOT NULL,
+            message TEXT NOT NULL,
+            submitted_at DATETIME DEFAULT CURRENT_TIMESTAMP
+          )`,
+          (err) => {
+            if (err) {
+              console.error('❌ Failed to create contacts table:', err.message);
+              dbError = err;
+            } else {
+              console.log('✅ Database table "contacts" ready');
+            }
+          }
+        );
+      });
     }
-  );
-});
+  });
+} catch (err) {
+  console.error('❌ Failed to initialize database:', err.message);
+  dbError = err;
+  dbReady = false;
+}
 
 // ============================================
 // PROMISIFY DATABASE METHODS
@@ -111,4 +120,4 @@ const dbGet = (sql, params = []) => {
   });
 };
 
-export { db, dbRun, dbAll, dbGet };
+export { db, dbReady, dbError, dbRun, dbAll, dbGet };

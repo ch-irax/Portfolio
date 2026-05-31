@@ -5,6 +5,7 @@
 
 import express from 'express';
 import Contact from './models/Contact.js';
+import { dbReady, dbError } from './database.js';
 
 const router = express.Router();
 
@@ -23,6 +24,15 @@ const router = express.Router();
  */
 router.post('/contact', async (req, res) => {
   console.log('📧 [Contact] New submission received');
+
+  // Check if database is ready
+  if (!dbReady || dbError) {
+    console.error('❌ [Contact] Database not ready:', dbError?.message);
+    return res.status(503).json({ 
+      error: 'Service temporarily unavailable. Please try again later.',
+      details: process.env.NODE_ENV === 'development' ? dbError?.message : undefined
+    });
+  }
 
   try {
     const { name, email, message } = req.body;
@@ -65,6 +75,16 @@ router.post('/contact', async (req, res) => {
  */
 router.get('/contacts', async (req, res) => {
   console.log('📑 [Contacts] Retrieving all submissions');
+  
+  // Check if database is ready
+  if (!dbReady || dbError) {
+    console.error('❌ [Contacts] Database not ready:', dbError?.message);
+    return res.status(503).json({ 
+      error: 'Service temporarily unavailable. Please try again later.',
+      details: process.env.NODE_ENV === 'development' ? dbError?.message : undefined
+    });
+  }
+
   try {
     const contacts = await Contact.getAll();
     console.log(`✅ [Contacts] Retrieved ${contacts.length} submissions`);
@@ -74,7 +94,7 @@ router.get('/contacts', async (req, res) => {
     });
   } catch (error) {
     console.error('❌ [Contacts] Error:', error.message);
-    res.status(500).json({ error: 'Failed to fetch contacts' });
+    res.status(500).json({ error: error.message || 'Failed to fetch contacts' });
   }
 });
 
