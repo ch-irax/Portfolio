@@ -55,18 +55,6 @@ console.log('✅ Rate limiting enabled (5 requests per 15 min)');
 app.use(express.json({ limit: '10kb' })); // Limit payload size to 10KB
 app.use(express.urlencoded({ limit: '10kb', extended: true }));
 
-// ====================== EMAIL CONFIG ======================
-import { sendContactNotification } from './email.js';
-
-// Log status once at startup
-if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
-  console.log('✅ Email notifications enabled (Gmail)');
-} else {
-  console.log('⚠️  Email notifications disabled. Set EMAIL_USER and EMAIL_PASS in .env');
-}
-
-
-
 // ============================================
 // ROUTES
 // ============================================

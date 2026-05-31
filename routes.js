@@ -5,7 +5,6 @@
 
 import express from 'express';
 import Contact from './models/Contact.js';
-import { sendContactNotification } from './email.js';
 
 const router = express.Router();
 
@@ -41,12 +40,9 @@ router.post('/contact', async (req, res) => {
     const cleanEmail = email.trim().toLowerCase();
     const cleanMessage = message.trim();
 
-    // 1. Save to database
+    // Save to database
     const contact = await Contact.create(cleanName, cleanEmail, cleanMessage);
     console.log(`✅ [Contact] Saved: ID ${contact.id} from ${cleanEmail}`);
-
-    // 2. Send email notification to you
-    await sendContactNotification(cleanName, cleanEmail, cleanMessage);
 
     res.status(201).json({
       success: true,
