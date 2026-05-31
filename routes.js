@@ -46,12 +46,14 @@ router.post('/contact', async (req, res) => {
 
     res.status(201).json({
       success: true,
-      message: 'Thank you! Your message has been received and saved.',
+      message: 'Thank you! Your message has been received.',
       contact,
     });
   } catch (error) {
-    console.error('❌ [Contact] Error:', error.message);
-    res.status(500).json({ error: 'Failed to send message' });
+    console.error('❌ [Contact] Error:', error.message || error);
+    res.status(500).json({ 
+      error: error.message || 'Failed to save message' 
+    });
   }
 });
 /**

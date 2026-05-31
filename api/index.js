@@ -24,6 +24,7 @@ app.use(
       'http://127.0.0.1:5173',
       'http://localhost:8000',
       'http://127.0.0.1:8000',
+      'https://portfolio-frontend.vercel.app',
       process.env.FRONTEND_URL || '*',
     ],
     credentials: true,
@@ -52,7 +53,11 @@ app.use(express.urlencoded({ limit: '10kb', extended: true }));
 
 // Health check endpoint
 app.get('/health', (req, res) => {
-  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+  res.json({ 
+    status: 'ok', 
+    timestamp: new Date().toISOString(),
+    environment: process.env.VERCEL ? 'vercel' : 'local'
+  });
 });
 
 // API routes with rate limiting
@@ -60,6 +65,7 @@ app.use('/api', contactLimiter, routes);
 
 // 404 - Route not found
 app.use((req, res) => {
+  console.warn(`⚠️  404: ${req.method} ${req.path} not found`);
   res.status(404).json({ error: 'Route not found' });
 });
 

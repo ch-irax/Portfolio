@@ -6,12 +6,22 @@
 import sqlite3 from 'sqlite3';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import fs from 'fs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Database file path (stored in db/ folder)
-const dbPath = path.join(__dirname, 'db', 'portfolio.db');
+// Use /tmp for Vercel (ephemeral storage) or local db folder for development
+const dbDir = process.env.VERCEL 
+  ? '/tmp'
+  : path.join(__dirname, 'db');
+
+// Create db directory if it doesn't exist
+if (!fs.existsSync(dbDir)) {
+  fs.mkdirSync(dbDir, { recursive: true });
+}
+
+const dbPath = path.join(dbDir, 'portfolio.db');
 
 // ============================================
 // DATABASE CONNECTION
@@ -20,10 +30,11 @@ const dbPath = path.join(__dirname, 'db', 'portfolio.db');
 const db = new sqlite3.Database(dbPath, (err) => {
   if (err) {
     console.error('❌ Database connection failed:', err.message);
-    process.exit(1);
+    // Don't exit - allow the app to continue and handle errors gracefully
+  } else {
+    console.log('✅ Connected to SQLite database');
+    console.log(`   Location: ${dbPath}`);
   }
-  console.log('✅ Connected to SQLite database');
-  console.log(`   Location: ${dbPath}`);
 });
 
 // ============================================
