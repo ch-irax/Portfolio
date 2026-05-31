@@ -6,7 +6,8 @@
   "main": "server.js",
  "scripts": {
   "start": "node --env-file=.env server.js",
-  "dev": "node --env-file=.env --watch server.js"
+  "dev": "node --env-file=.env --watch server.js",
+  "build": "echo 'No build needed for Express API'"
 },
   "dependencies": {
     "cors": "^2.8.5",
