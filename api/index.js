@@ -1,6 +1,6 @@
 /**
  * Vercel Serverless Function Entry Point
- * This exports the Express app for Vercel
+ * MongoDB-based Express app for Vercel
  */
 
 import express from 'express';
@@ -56,7 +56,8 @@ app.get('/health', (req, res) => {
   res.json({ 
     status: 'ok', 
     timestamp: new Date().toISOString(),
-    environment: process.env.VERCEL ? 'vercel' : 'local'
+    environment: process.env.VERCEL ? 'vercel' : 'local',
+    database: process.env.MONGODB_URI ? 'mongodb' : 'not configured'
   });
 });
 

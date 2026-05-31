@@ -5,7 +5,7 @@
 
 import express from 'express';
 import Contact from './models/Contact.js';
-import { dbReady, dbError } from './database.js';
+import { connectDB } from './database.js';
 
 const router = express.Router();
 
@@ -25,16 +25,15 @@ const router = express.Router();
 router.post('/contact', async (req, res) => {
   console.log('📧 [Contact] New submission received');
 
-  // Check if database is ready
-  if (!dbReady || dbError) {
-    console.error('❌ [Contact] Database not ready:', dbError?.message);
-    return res.status(503).json({ 
-      error: 'Service temporarily unavailable. Please try again later.',
-      details: process.env.NODE_ENV === 'development' ? dbError?.message : undefined
-    });
-  }
-
   try {
+    // Ensure database is connected
+    const connected = await connectDB();
+    if (!connected) {
+      return res.status(503).json({ 
+        error: 'Database connection failed. Please try again later.'
+      });
+    }
+
     const { name, email, message } = req.body;
 
     if (!name || !email || !message) {
@@ -51,8 +50,8 @@ router.post('/contact', async (req, res) => {
     const cleanMessage = message.trim();
 
     // Save to database
-    const contact = await Contact.create(cleanName, cleanEmail, cleanMessage);
-    console.log(`✅ [Contact] Saved: ID ${contact.id} from ${cleanEmail}`);
+    const contact = await Contact.createSubmission(cleanName, cleanEmail, cleanMessage);
+    console.log(`✅ [Contact] Saved: ID ${contact._id} from ${cleanEmail}`);
 
     res.status(201).json({
       success: true,
@@ -76,16 +75,15 @@ router.post('/contact', async (req, res) => {
 router.get('/contacts', async (req, res) => {
   console.log('📑 [Contacts] Retrieving all submissions');
   
-  // Check if database is ready
-  if (!dbReady || dbError) {
-    console.error('❌ [Contacts] Database not ready:', dbError?.message);
-    return res.status(503).json({ 
-      error: 'Service temporarily unavailable. Please try again later.',
-      details: process.env.NODE_ENV === 'development' ? dbError?.message : undefined
-    });
-  }
-
   try {
+    // Ensure database is connected
+    const connected = await connectDB();
+    if (!connected) {
+      return res.status(503).json({ 
+        error: 'Database connection failed. Please try again later.'
+      });
+    }
+
     const contacts = await Contact.getAll();
     console.log(`✅ [Contacts] Retrieved ${contacts.length} submissions`);
     res.json({
