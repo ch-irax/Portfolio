@@ -4,8 +4,8 @@
  */
 
 import express from 'express';
-import Contact from './models/Contact.js';
-import { connectDB } from './database.js';
+import Contact from '../models/Contact.js';
+import { connectDB } from '../database.js';
 
 const router = express.Router();
 

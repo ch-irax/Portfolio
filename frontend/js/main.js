@@ -177,7 +177,7 @@ if (form) {
       return;
     }
 
-    // Show loading
+    // Show loading 
     const submitBtn = form.querySelector('button');
     const originalText = submitBtn.textContent;
     submitBtn.textContent = 'Sending...';
@@ -185,7 +185,7 @@ if (form) {
     formStatus.classList.add('hidden');
 
     try {
-      const response = await fetch('http://localhost:5001/api/contact', {
+      const response = await fetch(`${API_URL}/api/contact`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
