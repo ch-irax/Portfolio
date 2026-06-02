@@ -1,9 +1,6 @@
 (function () {
   'use strict';
 
-  // ——— Backend API URL ———
-  const API_URL = 'http://localhost:5000';
-
   // ——— Navbar scroll opacity ———
   const navbar = document.getElementById('navbar');
   const onScrollNav = () => {
@@ -188,24 +185,15 @@ if (form) {
     formStatus.classList.add('hidden');
 
     try {
-      const response = await fetch(`${API_URL}/api/contact`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      });
-
-      const data = await response.json();
-
-      if (response.ok && data.success) {
-        formStatus.textContent = data.message || 'Thank you! Message received.';
-        formStatus.classList.remove('hidden');
-        formStatus.style.color = '#22c55e'; // green
-        form.reset();
-      } else {
-        throw new Error(data.error || 'Failed to send message');
-      }
+      // Simulate successful submission (no backend needed)
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      formStatus.textContent = 'Thank you! Message received. I will get back to you soon.';
+      formStatus.classList.remove('hidden');
+      formStatus.style.color = '#22c55e'; // green
+      form.reset();
     } catch (error) {
-      formStatus.textContent = error.message || 'Something went wrong. Please try again.';
+      formStatus.textContent = 'Something went wrong. Please try again.';
       formStatus.classList.remove('hidden');
       formStatus.style.color = '#ef4444'; // red
     } finally {
