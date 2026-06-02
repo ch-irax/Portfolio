@@ -1,6 +1,9 @@
 (function () {
   'use strict';
 
+  // ——— Backend API URL ———
+  const API_URL = 'http://localhost:5000';
+
   // ——— Navbar scroll opacity ———
   const navbar = document.getElementById('navbar');
   const onScrollNav = () => {
